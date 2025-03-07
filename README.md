@@ -1,5 +1,4 @@
-[![image](https://github.com/user-attachments/assets/58a25d17-e00f-442a-8e63-c69aca1db7e5)
-HuggingFace](https://huggingface.co/collections/DiagramAgent/diagramagent-67c5c0935149cdc6e0230b46)
+[🤗 HuggingFace](https://huggingface.co/collections/DiagramAgent/diagramagent-67c5c0935149cdc6e0230b46)
 [📑paper](https://arxiv.org/abs/2411.11916)
 
 **AI directly generates editable diagrams! DiagramAgent makes drawing smarter 🎨🚀**
@@ -23,3 +22,95 @@ Are you still drawing flowcharts, architecture diagrams, and mind maps manually?
 🎯 Suitable for scientific research, technical documentation, educational explanations, automated visualization and other scenarios.
 
 **Drawing in the future will no longer be done manually!** 🎨🚀
+
+### Usage Examples
+***Diagram-to-Code Agent**
+
+> The environment configuration is the same as Qwen2-VL
+
+```py
+from transformers import Qwen2VLForConditionalGeneration, AutoTokenizer, AutoProcessor
+from qwen_vl_utils import process_vision_info
+
+# default: Load the model on the available device(s)
+model = Qwen2VLForConditionalGeneration.from_pretrained(
+    "DiagramAgent/Diagram_to_Code_Agent", torch_dtype="auto", device_map="auto"
+)
+
+# default processer
+processor = AutoProcessor.from_pretrained("DiagramAgent/Diagram_to_Code_Agent")
+
+messages = [
+    {
+        "role": "user",
+        "content": [
+            {
+                "type": "image",
+                "image": "your input",
+            },
+            {"type": "text", "text": "image path"},
+        ],
+    }
+]
+
+# Preparation for inference
+text = processor.apply_chat_template(
+    messages, tokenize=False, add_generation_prompt=True
+)
+image_inputs, video_inputs = process_vision_info(messages)
+inputs = processor(
+    text=[text],
+    images=image_inputs,
+    videos=video_inputs,
+    padding=True,
+    return_tensors="pt",
+)
+inputs = inputs.to("cuda")
+
+# Inference: Generation of the output
+generated_ids = model.generate(**inputs, max_new_tokens=8192)
+generated_ids_trimmed = [
+    out_ids[len(in_ids) :] for in_ids, out_ids in zip(inputs.input_ids, generated_ids)
+]
+output_text = processor.batch_decode(
+    generated_ids_trimmed, skip_special_tokens=True, clean_up_tokenization_spaces=False
+)
+print(output_text)
+```
+
+**Code Agent**
+
+> The environment configuration is the same as Qwen2.5-Coder
+
+```py
+from transformers import AutoModelForCausalLM, AutoTokenizer
+
+model_name = "DiagramAgent/Code_Agent"
+
+model = AutoModelForCausalLM.from_pretrained(
+    model_name,
+    torch_dtype="auto",
+    device_map="auto"
+)
+tokenizer = AutoTokenizer.from_pretrained(model_name)
+
+messages = [
+    {"role": "user", "content": "your input"}
+]
+text = tokenizer.apply_chat_template(
+    messages,
+    tokenize=False,
+    add_generation_prompt=True
+)
+model_inputs = tokenizer([text], return_tensors="pt").to(model.device)
+
+generated_ids = model.generate(
+    **model_inputs,
+    max_new_tokens=8192
+)
+generated_ids = [
+    output_ids[len(input_ids):] for input_ids, output_ids in zip(model_inputs.input_ids, generated_ids)
+]
+
+response = tokenizer.batch_decode(generated_ids, skip_special_tokens=True)[0]
+```
