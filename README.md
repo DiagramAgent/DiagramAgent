@@ -10,7 +10,9 @@ Are you still drawing flowcharts, architecture diagrams, and mind maps manually?
 ### **🔍 Main highlights**
 
 ✅ **Text generates diagrams**: Enter the description, AI automatically draws, no need to manually place elements.
+
 ✅ **Support modification**: Want to change the content? Edit directly, no need to redraw!
+
 ✅ **Accurate and stable**: AI-generated diagrams **have clear structure, accurate logic, and standard format**, suitable for scientific research, teaching, technical documents and other scenarios.
 
 ### **🚀 Research and innovation**
