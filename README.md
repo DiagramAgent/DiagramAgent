@@ -118,3 +118,18 @@ generated_ids = [
 
 response = tokenizer.batch_decode(generated_ids, skip_special_tokens=True)[0]
 ```
+
+
+### Citation
+
+If you find our work helpful, feel free to give us a cite.
+
+
+```
+@inproceedings{wei2024wordsstructuredvisualsbenchmark,
+  title={From Words to Structured Visuals: A Benchmark and Framework for Text-to-Diagram Generation and Editing},
+  author={Jingxuan Wei and Cheng Tan and Qi Chen and Gaowei Wu and Siyuan Li and Zhangyang Gao and Linzhuang Sun and Bihui Yu and Ruifeng Guo},
+  booktitle={Proceedings of the IEEE/CVF Conference on Computer Vision and Pattern Recognition},
+  year={2025}
+}
+```
